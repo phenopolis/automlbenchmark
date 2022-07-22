@@ -31,8 +31,8 @@
 
 - name: teddata
   dataset:
-    train: ./test_data/differentiate_cancer_train.csv
-    test: ./test_data/differentiate_cancer_test.csv
+    train: /input/test_data/differentiate_cancer_train.csv
+    test: /input/test_data/differentiate_cancer_test.csv
     type: binary
     target: target
   folds: 1
