@@ -112,7 +112,7 @@ for c in ${constraints}; do
     for b in ${benchmarks}; do
         for f in ${frameworks}; do
             echo "python runbenchmark.py $f $b $c -m $mode -p $parallel -i ."
-            python runbenchmark.py "$f" "$b" "$c" -m "$mode" -p "$parallel" -i . # "$extra_params"
+            yes | python runbenchmark.py "$f" "$b" "$c" -m "$mode" -p "$parallel" -i . # "$extra_params"
         done
     done
 done

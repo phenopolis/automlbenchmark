@@ -27,7 +27,7 @@
 - name: __defaults__
   folds: 1
   cores: 4
-  max_runtime_seconds: 60
+  max_runtime_seconds: 200
 
 - name: teddata
   dataset:
