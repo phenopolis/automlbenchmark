@@ -64,7 +64,7 @@ for i in "$@"; do
         parallel="${i#*=}"
         shift
         ;;
-    -* | --*=) # unsupported args
+    --=* | -*) # unsupported args
         usage
         exit 1
         ;;
