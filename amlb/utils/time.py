@@ -34,7 +34,7 @@ def datetime_iso(datetime=None, date=True, time=True, micros=False, date_sep='-'
     if time:
         strf += "%H{_}%M{_}%S".format(_=time_sep)
         if micros:
-            strf += "{_}%f".format(_=micros_sep)
+            strf += f"{micros_sep}%f"
     datetime = dt.datetime.utcnow() if datetime is None else datetime
     return datetime.strftime(strf)
 

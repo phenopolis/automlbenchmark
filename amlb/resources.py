@@ -130,14 +130,14 @@ class Resources:
         if tag is None:
             tag = default_tag
         if tag not in self._frameworks:
-            raise ValueError("Incorrect tag `{}`: only those among {} are allowed.".format(tag, self.config.frameworks.tags))
+            raise ValueError(f"Incorrect tag `{tag}`: only those among {self.config.frameworks.tags} are allowed.")
         frameworks = self._frameworks[tag]
         log.debug("Available framework definitions:\n%s", frameworks)
         framework = next((f for n, f in frameworks if n.lower() == lname), None)
         if not framework:
-            raise ValueError("Incorrect framework `{}`: not listed in {}.".format(name, self.config.frameworks.definition_file))
+            raise ValueError(f"Incorrect framework `{name}`: not listed in {self.config.frameworks.definition_file}.")
         if framework['abstract']:
-            raise ValueError("Framework definition `{}` is abstract and cannot be run directly.".format(name))
+            raise ValueError(f"Framework definition `{name}` is abstract and cannot be run directly.")
         return framework, framework.name
 
     @lazy_property
@@ -153,7 +153,7 @@ class Resources:
         """
         constraint = self._constraints[name.lower()]
         if not constraint:
-            raise ValueError("Incorrect constraint definition `{}`: not listed in {}.".format(name, self.config.benchmarks.constraints_file))
+            raise ValueError(f"Incorrect constraint definition `{name}`: not listed in {self.config.benchmarks.constraints_file}.")
         return constraint, constraint.name
 
     @lazy_property
@@ -202,17 +202,17 @@ class Resources:
             if task[conf] is None:
                 missing.append(conf)
         if not lenient and len(missing) > 0:
-            raise ValueError("{missing} mandatory properties as missing in task definition {taskdef}.".format(missing=missing, taskdef=task))
+            raise ValueError(f"{missing} mandatory properties as missing in task definition {task}.")
 
         for conf in ['max_runtime_seconds', 'cores', 'folds', 'max_mem_size_mb', 'min_vol_size_mb']:
             if task[conf] is None:
                 task[conf] = self.config.benchmarks.defaults[conf]
-                log.debug("Config `{config}` not set for task {name}, using default `{value}`.".format(config=conf, name=task.name, value=task[conf]))
+                log.debug(f"Config `{conf}` not set for task {task.name}, using default `{task[conf]}`.")
 
         conf = 'id'
         if task[conf] is None:
-            task[conf] = ("openml.org/t/{}".format(task.openml_task_id) if task['openml_task_id'] is not None
-                          else "openml.org/d/{}".format(task.openml_dataset_id) if task['openml_dataset_id'] is not None
+            task[conf] = (f"openml.org/t/{task.openml_task_id}" if task['openml_task_id'] is not None
+                          else f"openml.org/d/{task.openml_dataset_id}" if task['openml_dataset_id'] is not None
                           else ((task.dataset['id'] if isinstance(task.dataset, (dict, Namespace))
                                  else task.dataset if isinstance(task.dataset, str)
                                  else None) or task.name) if task['dataset'] is not None
@@ -240,12 +240,12 @@ class Resources:
             else:
                 i_size = i_map.default
             task[conf] = '.'.join([i_series, i_size])
-            log.debug("Config `{config}` not set for task {name}, using default selection `{value}`.".format(config=conf, name=task.name, value=task[conf]))
+            log.debug(f"Config `{conf}` not set for task {task.name}, using default selection `{task[conf]}`.")
 
         conf = 'ec2_volume_type'
         if task[conf] is None:
             task[conf] = self.config.aws.ec2.volume_type
-            log.debug("Config `{config}` not set for task {name}, using default `{value}`.".format(config=conf, name=task.name, value=task[conf]))
+            log.debug(f"Config `{conf}` not set for task {task.name}, using default `{task[conf]}`.")
 
 
 __INSTANCE__: Resources = None

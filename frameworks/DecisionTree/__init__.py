@@ -1,4 +1,3 @@
-
 def version():
     from sklearn import __version__
     return __version__

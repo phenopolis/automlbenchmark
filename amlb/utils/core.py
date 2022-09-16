@@ -400,7 +400,7 @@ def fn_name(fn):
 
 
 def json_load(file, as_namespace=False):
-    with open(file, 'r') as f:
+    with open(file) as f:
         return json_loads(f.read(), as_namespace=as_namespace)
 
 

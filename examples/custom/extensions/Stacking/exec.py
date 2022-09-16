@@ -32,9 +32,9 @@ def run(dataset, config):
     n_jobs = config.framework_params.get('_n_jobs', config.cores)  # useful to disable multicore, regardless of the dataset config
     estimators_params = {e: config.framework_params.get(f'_{e}_params', {}) for e in ['rf', 'gbm', 'linear', 'svc', 'final']}
 
-    log.info("Running Sklearn Stacking Ensemble with a maximum time of {}s on {} cores.".format(config.max_runtime_seconds, n_jobs))
+    log.info(f"Running Sklearn Stacking Ensemble with a maximum time of {config.max_runtime_seconds}s on {n_jobs} cores.")
     log.warning("We completely ignore the requirement to stay within the time limit.")
-    log.warning("We completely ignore the advice to optimize towards metric: {}.".format(config.metric))
+    log.warning(f"We completely ignore the advice to optimize towards metric: {config.metric}.")
 
 
     if is_classification:

@@ -21,7 +21,7 @@ def add_imputed_mark(values, imp, val_type=float, val_format=None):
                     else lambda *val: formats[val_type.__name__].format(*val))
     return (values.astype(object)
             .combine(imp,
-                     lambda val, imp: format_value(val, " ({:.0g})".format(imp) if imp else '')))
+                     lambda val, imp: format_value(val, f" ({imp:.0g})" if imp else '')))
 
 
 def render_summary(col, results, show_imputations=True, filename=None, float_format=None):

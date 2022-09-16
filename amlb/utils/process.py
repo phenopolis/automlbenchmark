@@ -321,7 +321,7 @@ def call_in_subprocess(target, *args, **kwargs):
         else:
             return result
     except queue.Empty:
-        raise Exception("Subprocess running {} died abruptly.".format(target.__name__))
+        raise Exception(f"Subprocess running {target.__name__} died abruptly.")
     except BaseException:
         try:
             kill_proc_tree(p.pid)

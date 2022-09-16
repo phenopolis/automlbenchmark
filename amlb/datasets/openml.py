@@ -44,12 +44,12 @@ class OpenmlLoader:
     def load(self, task_id=None, dataset_id=None, fold=0):
         if task_id is not None:
             if dataset_id is not None:
-                log.warning("Ignoring dataset id {} as a task id {} was already provided.".format(dataset_id, task_id))
+                log.warning(f"Ignoring dataset id {dataset_id} as a task id {task_id} was already provided.")
             task = oml.tasks.get_task(task_id, download_qualities=False)
             dataset = oml.datasets.get_dataset(task.dataset_id, download_qualities=False)
             _, nfolds, _ = task.get_split_dimensions()
             if fold >= nfolds:
-                raise ValueError("OpenML task {} only accepts `fold` < {}.".format(task_id, nfolds))
+                raise ValueError(f"OpenML task {task_id} only accepts `fold` < {nfolds}.")
         elif dataset_id is not None:
             raise NotImplementedError("OpenML raw datasets are not supported yet, please use an OpenML task instead.")
         else:
@@ -229,7 +229,7 @@ class ArffSplitter(DataSplitter[str]):
         if not os.path.isfile(train_path) or not os.path.isfile(test_path):
             X = self.ds._load_full_data('dataframe')
             train, test = X.iloc[self.train_ind, :], X.iloc[self.test_ind, :]
-            name_template = "{name}_{{split}}_{fold}".format(name=self.ds._oml_dataset.name, fold=self.ds.fold)
+            name_template = f"{self.ds._oml_dataset.name}_{{split}}_{self.ds.fold}"
             self._save_split(train, train_path, name_template.format(split="train"))
             self._save_split(test, test_path, name_template.format(split="test"))
         return train_path, test_path
@@ -266,7 +266,7 @@ class ArffSplitter(DataSplitter[str]):
             # boolean values, which always write values as 'True' and 'False',
             # so we need to adapt the header accordingly.
             # Not doing so causes an issue in the R packages.
-            if set(v.lower() for v in feat.nominal_values) == {"true", "false"}:
+            if {v.lower() for v in feat.nominal_values} == {"true", "false"}:
                 return sorted(v.lower().capitalize() for v in feat.nominal_values)
             return sorted(feat.nominal_values)
         return None

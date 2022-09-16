@@ -18,7 +18,7 @@ class YAMLNamespaceConstructor(SafeConstructor):
 
     @classmethod
     def init(cls):
-        cls.add_constructor(u'tag:yaml.org,2002:map', cls.construct_yaml_map)
+        cls.add_constructor('tag:yaml.org,2002:map', cls.construct_yaml_map)
 
     def construct_yaml_map(self, node):
         data = Namespace()
@@ -48,7 +48,7 @@ def config_load(path, verbose=False):
     _, ext = os.path.splitext(path.lower())
     loader = json_load if ext == 'json' else yaml_load
     log.log(logging.INFO if verbose else logging.DEBUG, "Loading config file `%s`.", path)
-    with open(path, 'r') as file:
+    with open(path) as file:
         return loader(file, as_namespace=True)
 
 

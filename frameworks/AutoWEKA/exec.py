@@ -26,7 +26,7 @@ def run(dataset: Dataset, config: TaskConfig):
     )
     metric = metrics_mapping[config.metric] if config.metric in metrics_mapping else None
     if metric is None:
-        raise ValueError("Performance metric {} not supported.".format(config.metric))
+        raise ValueError(f"Performance metric {config.metric} not supported.")
 
     train_file = dataset.train.path
     test_file = dataset.test.path
@@ -58,17 +58,17 @@ def run(dataset: Dataset, config: TaskConfig):
         weka_path=f":{weka_jar}" if os.path.isfile(weka_jar) else ""
     )
     cmd_params = dict(
-        t='"{}"'.format(train_file),
-        T='"{}"'.format(test_file),
+        t=f'"{train_file}"',
+        T=f'"{test_file}"',
         memLimit=memLimit,
-        classifications='"weka.classifiers.evaluation.output.prediction.CSV -distribution -file \\\"{}\\\""'.format(weka_file),
+        classifications=f'"weka.classifiers.evaluation.output.prediction.CSV -distribution -file \\\"{weka_file}\\\""',
         timeLimit=int(config.max_runtime_seconds/60),
         parallelRuns=parallelRuns,
         metric=metric,
         seed=config.seed % (1 << 16),   # weka accepts only int16 as seeds
         **training_params
     )
-    cmd = cmd_root + ' '.join(["-{} {}".format(k, v) for k, v in cmd_params.items()])
+    cmd = cmd_root + ' '.join([f"-{k} {v}" for k, v in cmd_params.items()])
     with Timer() as training:
         run_cmd(cmd, _live_output_=True)
 
@@ -78,7 +78,7 @@ def run(dataset: Dataset, config: TaskConfig):
     probabilities_labels = dataset.target.values
     if not os.path.exists(weka_file):
         raise NoResultError("AutoWEKA failed producing any prediction.")
-    with open(weka_file, 'r') as weka_file:
+    with open(weka_file) as weka_file:
         probabilities = []
         predictions = []
         truth = []

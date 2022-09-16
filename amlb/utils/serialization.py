@@ -123,7 +123,7 @@ def _pd_dtypes_from_str(pd, dt):
     def dt_from_str(s):
         m_sparse = re.match(r"Sparse\[(.*)]", s)
         if m_sparse:
-            sub_type, fill_value = [t.strip() for t in m_sparse.group(1).split(",", 1)]
+            sub_type, fill_value = (t.strip() for t in m_sparse.group(1).split(",", 1))
             try:
                 fill_value = eval(fill_value, {'nan': math.nan, '<NA>': pd.NA})
             except ValueError:

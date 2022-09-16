@@ -1,24 +1,25 @@
 import logging
 import os
 import shutil
-import warnings
 import sys
 import tempfile
+import warnings
+
 warnings.simplefilter("ignore")
 
-if sys.platform == 'darwin':
-    os.environ['OMP_NUM_THREADS'] = '1'
+if sys.platform == "darwin":
+    os.environ["OMP_NUM_THREADS"] = "1"
 
 import matplotlib
 import pandas as pd
-matplotlib.use('agg')  # no need for tk
 
-from autogluon.tabular import TabularPredictor
-from autogluon.core.utils.savers import save_pd, save_pkl
+matplotlib.use("agg")  # no need for tk
+
 import autogluon.core.metrics as metrics
+from autogluon.core.utils.savers import save_pd, save_pkl
+from autogluon.tabular import TabularPredictor
 from autogluon.tabular.version import __version__
-
-from frameworks.shared.callee import call_run, result, output_subdir
+from frameworks.shared.callee import call_run, output_subdir, result
 from frameworks.shared.utils import Timer, zip_path
 
 log = logging.getLogger(__name__)
@@ -43,8 +44,8 @@ def run(dataset, config):
         # TODO: figure out if we are going to blindly pass metrics through, or if we use a strict mapping
         log.warning("Performance metric %s not supported.", config.metric)
 
-    is_classification = config.type == 'classification'
-    training_params = {k: v for k, v in config.framework_params.items() if not k.startswith('_')}
+    is_classification = config.type == "classification"
+    training_params = {k: v for k, v in config.framework_params.items() if not k.startswith("_")}
 
     train, test = dataset.train.path, dataset.test.path
     label = dataset.target.name
@@ -58,11 +59,7 @@ def run(dataset, config):
             eval_metric=perf_metric.name,
             path=models_dir,
             problem_type=problem_type,
-        ).fit(
-            train_data=train,
-            time_limit=config.max_runtime_seconds,
-            **training_params
-        )
+        ).fit(train_data=train, time_limit=config.max_runtime_seconds, **training_params)
 
     del train
 
@@ -77,15 +74,19 @@ def run(dataset, config):
 
     prob_labels = probabilities.columns.values.astype(str).tolist() if probabilities is not None else None
 
-    _leaderboard_extra_info = config.framework_params.get('_leaderboard_extra_info', False)  # whether to get extra model info (very verbose)
-    _leaderboard_test = config.framework_params.get('_leaderboard_test', False)  # whether to compute test scores in leaderboard (expensive)
+    _leaderboard_extra_info = config.framework_params.get(
+        "_leaderboard_extra_info", False
+    )  # whether to get extra model info (very verbose)
+    _leaderboard_test = config.framework_params.get(
+        "_leaderboard_test", False
+    )  # whether to compute test scores in leaderboard (expensive)
     leaderboard_kwargs = dict(silent=True, extra_info=_leaderboard_extra_info)
     # Disabled leaderboard test data input by default to avoid long running computation, remove 7200s timeout limitation to re-enable
     if _leaderboard_test:
-        leaderboard_kwargs['data'] = test
+        leaderboard_kwargs["data"] = test
 
     leaderboard = predictor.leaderboard(**leaderboard_kwargs)
-    with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', 1000):
+    with pd.option_context("display.max_rows", None, "display.max_columns", None, "display.width", 1000):
         log.info(leaderboard)
 
     num_models_trained = len(leaderboard)
@@ -97,30 +98,32 @@ def run(dataset, config):
     save_artifacts(predictor, leaderboard, config)
     shutil.rmtree(predictor.path, ignore_errors=True)
 
-    return result(output_file=config.output_predictions_file,
-                  predictions=predictions,
-                  probabilities=probabilities,
-                  probabilities_labels=prob_labels,
-                  target_is_encoded=False,
-                  models_count=num_models_trained,
-                  models_ensemble_count=num_models_ensemble,
-                  training_duration=training.duration,
-                  predict_duration=predict.duration)
+    return result(
+        output_file=config.output_predictions_file,
+        predictions=predictions,
+        probabilities=probabilities,
+        probabilities_labels=prob_labels,
+        target_is_encoded=False,
+        models_count=num_models_trained,
+        models_ensemble_count=num_models_ensemble,
+        training_duration=training.duration,
+        predict_duration=predict.duration,
+    )
 
 
 def save_artifacts(predictor, leaderboard, config):
-    artifacts = config.framework_params.get('_save_artifacts', ['leaderboard'])
+    artifacts = config.framework_params.get("_save_artifacts", ["leaderboard"])
     try:
-        if 'leaderboard' in artifacts:
+        if "leaderboard" in artifacts:
             leaderboard_dir = output_subdir("leaderboard", config)
             save_pd.save(path=os.path.join(leaderboard_dir, "leaderboard.csv"), df=leaderboard)
 
-        if 'info' in artifacts:
+        if "info" in artifacts:
             ag_info = predictor.info()
             info_dir = output_subdir("info", config)
             save_pkl.save(path=os.path.join(info_dir, "info.pkl"), object=ag_info)
 
-        if 'models' in artifacts:
+        if "models" in artifacts:
             shutil.rmtree(os.path.join(predictor.path, "utils"), ignore_errors=True)
             models_dir = output_subdir("models", config)
             zip_path(predictor.path, os.path.join(models_dir, "models.zip"))
@@ -128,5 +131,5 @@ def save_artifacts(predictor, leaderboard, config):
         log.warning("Error when saving artifacts.", exc_info=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     call_run(run)

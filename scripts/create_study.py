@@ -13,7 +13,7 @@ benchmarks_to_include = [
 if __name__ == '__main__':
     benchmarks = []
     for filename in benchmarks_to_include:
-        with open(filename, 'r') as fh:
+        with open(filename) as fh:
             benchmark = fh.read()
             benchmarks.append(yaml.load(benchmark))
 

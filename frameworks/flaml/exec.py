@@ -18,7 +18,7 @@ def run(dataset, config):
     is_classification = config.type == 'classification'
     time_budget = config.max_runtime_seconds
     n_jobs = config.framework_params.get('_n_jobs', config.cores)
-    log.info("Running FLAML with {} number of cores".format(config.cores))
+    log.info(f"Running FLAML with {config.cores} number of cores")
     aml = AutoML()
 
     # Mapping of benchmark metrics to flaml metrics

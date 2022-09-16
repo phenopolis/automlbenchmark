@@ -62,11 +62,11 @@ def run(dataset: Dataset, config: TaskConfig):
         with Timer() as training:
             run_cmd(cmd)
 
-        train_result_json = os.path.join(output_dir, '{}.mbconfig'.format(config.fold))
+        train_result_json = os.path.join(output_dir, f'{config.fold}.mbconfig')
         if not os.path.exists(train_result_json):
             raise NoResultError("MLNet failed producing any prediction.")
 
-        with open(train_result_json, 'r') as f:
+        with open(train_result_json) as f:
             json_str = f.read()
             mb_config = json.loads(json_str)
             model_path = os.path.join(output_dir, f"{config.fold}.zip")

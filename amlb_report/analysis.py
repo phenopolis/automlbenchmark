@@ -1,5 +1,3 @@
-
-
 def list_outliers(col, results, z_threshold=3):
     df = results.pivot_table(index=['type','task', 'framework'], columns='fold', values=col)
     df_mean = df.mean(axis=1)

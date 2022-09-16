@@ -31,7 +31,7 @@ log = logging.getLogger(__name__)
 def pick_values_uniform(start: int, end: int, length: int):
     d = (end - start) / (length - 1)
     uniform_floats = [start + i * d for i in range(length)]
-    return sorted(set([int(f) for f in uniform_floats]))
+    return sorted({int(f) for f in uniform_floats})
 
 
 def extrapolate_with_worst_case(values: List[float], n: int = 5) -> float:

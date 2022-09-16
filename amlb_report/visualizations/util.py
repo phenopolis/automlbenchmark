@@ -32,7 +32,7 @@ def render_colormap(name):
 def task_labels(index):
     max_length = 16
     return (index.droplevel('type')
-            .map(lambda x: x if len(x) <= max_length else u'{}…'.format(x[:max_length-1]))
+            .map(lambda x: x if len(x) <= max_length else f'{x[:max_length-1]}…')
             .values)
 
 

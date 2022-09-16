@@ -153,11 +153,11 @@ class AWSBenchmark(Benchmark):
 
     def _validate2(self):
         if self.ami is None:
-            raise ValueError("Region {} not supported by AMI yet.".format(self.region))
+            raise ValueError(f"Region {self.region} not supported by AMI yet.")
 
     def setup(self, mode):
         if mode == SetupMode.skip:
-            log.warning("AWS setup mode set to unsupported {mode}, ignoring.".format(mode=mode))
+            log.warning(f"AWS setup mode set to unsupported {mode}, ignoring.")
 
         # S3 setup to exchange files between local and ec2 instances
         self.s3 = boto3.resource('s3', region_name=self.region)
@@ -296,7 +296,7 @@ class AWSBenchmark(Benchmark):
                                     else None)
 
         timeout_secs = (task_def.max_runtime_seconds if 'max_runtime_seconds' in task_def
-                        else sum([task.max_runtime_seconds for task in self.benchmark_def]))
+                        else sum(task.max_runtime_seconds for task in self.benchmark_def))
         timeout_secs += rconfig().benchmarks.overhead_time_seconds
         timeout_secs += rconfig().aws.overhead_time_seconds
 
@@ -344,7 +344,7 @@ class AWSBenchmark(Benchmark):
                     script_params="{framework} {benchmark} {constraint} {task_param} {folds_param} -Xseed={seed}".format(
                         framework=self._forward_params['framework_name'],
                         benchmark=(self._forward_params['benchmark_name']if self.benchmark_path is None or self.benchmark_path.startswith(rconfig().root_dir)
-                                   else "{}/{}".format(resources_root, self._rel_path(self.benchmark_path))),
+                                   else f"{resources_root}/{self._rel_path(self.benchmark_path)}"),
                         constraint=self._forward_params['constraint_name'],
                         task_param='' if len(task_names) == 0 else ' '.join(['-t']+task_names),
                         folds_param='' if len(folds) == 0 else ' '.join(['-f']+folds),
@@ -446,7 +446,7 @@ class AWSBenchmark(Benchmark):
             inst_desc = self.instances[job.ext.instance_id] if job.ext.instance_id in self.instances else ns()
             if inst_desc['abort']:
                 self._update_instance(job.ext.instance_id, status='aborted')
-                raise AWSError("Aborting instance {} for job {}.".format(job.ext.instance_id, job.name))
+                raise AWSError(f"Aborting instance {job.ext.instance_id} for job {job.name}.")
             try:
                 state = instance.state['Name']
                 state_code = instance.state['Code']
@@ -630,7 +630,7 @@ class AWSBenchmark(Benchmark):
                                              start_time=datetime_iso(), stop_time='', stop_reason='',
                                              meta_info=None)
         except Exception as e:
-            fake_iid = "no_instance_{}".format(len(self.instances)+1)
+            fake_iid = f"no_instance_{len(self.instances)+1}"
             self.instances[fake_iid] = ns(instance=None, key=inst_key, status='failed', success=False,
                                           start_time=datetime_iso(), stop_time=datetime_iso(), stop_reason=str(e),
                                           meta_info=None)
@@ -966,14 +966,14 @@ class AWSBenchmark(Benchmark):
             log.info("Role %s successfully created.", role_name)
 
         if iamc.s3_policy_name not in [p.name for p in irole.policies.all()]:
-            resource_prefix="arn:aws:s3:::{bucket}*/{root_key}".format(bucket=bucket_prefix, root_key=str_def(s3c.root_key))  # ARN format for s3, cf. https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-arn-format.html
+            resource_prefix=f"arn:aws:s3:::{bucket_prefix}*/{str_def(s3c.root_key)}"  # ARN format for s3, cf. https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-arn-format.html
             s3_policy_json = json.dumps({
                 'Version': '2012-10-17',
                 'Statement': [
                     {
                         'Effect': 'Allow',
                         'Action': 's3:List*',
-                        'Resource': 'arn:aws:s3:::{}*'.format(bucket_prefix)
+                        'Resource': f'arn:aws:s3:::{bucket_prefix}*'
                     },
                     {
                         'Effect': 'Allow',

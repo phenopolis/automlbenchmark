@@ -1,4 +1,3 @@
-
 nfolds = 10
 ff = '%.6g'
 colormap = 'colorblind'

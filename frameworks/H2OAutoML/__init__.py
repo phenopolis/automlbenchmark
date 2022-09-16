@@ -38,7 +38,7 @@ def docker_commands(*args, setup_cmd=None):
 EXPOSE 54321
 EXPOSE 54322
 """.format(
-        cmd="RUN {}".format(setup_cmd) if setup_cmd is not None else ""
+        cmd=f"RUN {setup_cmd}" if setup_cmd is not None else ""
     )
 
 
@@ -50,5 +50,5 @@ def singularity_commands(*args, setup_cmd=None):
     return """
 {cmd}
 """.format(
-        cmd="{}".format(setup_cmd) if setup_cmd is not None else ""
+        cmd=f"{setup_cmd}" if setup_cmd is not None else ""
     )

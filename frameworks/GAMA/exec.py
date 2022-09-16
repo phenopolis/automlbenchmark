@@ -45,7 +45,7 @@ def run(dataset, config):
     )
     scoring_metric = metrics_mapping[config.metric] if config.metric in metrics_mapping else None
     if scoring_metric is None:
-        raise ValueError("Performance metric {} not supported.".format(config.metric))
+        raise ValueError(f"Performance metric {config.metric} not supported.")
 
     training_params = {k: v for k, v in config.framework_params.items() if not k.startswith('_')}
     n_jobs = config.framework_params.get('_n_jobs', config.cores)  # useful to disable multicore, regardless of the dataset config
