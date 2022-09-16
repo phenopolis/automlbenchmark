@@ -120,7 +120,7 @@ class DockerBenchmark(ContainerBenchmark):
     def _generate_script(self, custom_commands):
         docker_content = """FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update
+RUN apt-get update && apt-get install -y tzdata
 RUN apt-get -y install apt-utils dialog locales sudo
 RUN apt-get -y install curl wget unzip git
 RUN apt-get -y install software-properties-common
@@ -166,6 +166,7 @@ RUN (grep -v '^\\s*#' | xargs -L 1 $PIP install --no-cache-dir) < requirements.t
 RUN chown -R {username}.{username} /bench
 RUN chown -R {username}.{username} /home/{username}
 USER {username}
+ARG DEBIAN_FRONTEND=noninteractive
 RUN $PY {script} {framework} -s only
 {custom_commands}
 
