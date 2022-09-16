@@ -119,16 +119,19 @@ class DockerBenchmark(ContainerBenchmark):
 
     def _generate_script(self, custom_commands):
         docker_content = """FROM ubuntu:18.04
-RUN useradd -m -u {userid} {username}
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
-RUN apt-get -y install apt-utils dialog locales
+RUN apt-get -y install apt-utils dialog locales sudo
 RUN apt-get -y install curl wget unzip git
 RUN apt-get -y install software-properties-common
 RUN add-apt-repository -y ppa:deadsnakes/ppa
 RUN apt-get update
 RUN apt-get -y install python{pyv} python{pyv}-venv python{pyv}-dev python3-pip
 #RUN update-alternatives --install /usr/bin/python3 python3 $(which python{pyv}) 1
+
+RUN adduser --disabled-password --gecos '' -uid {userid} {username}
+RUN adduser {username} sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # aliases for the python system
 ENV SPIP python{pyv} -m pip
