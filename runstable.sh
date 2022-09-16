@@ -64,6 +64,10 @@ for i in "$@"; do
         parallel="${i#*=}"
         shift
         ;;
+    -s=* | --setup=*)
+        setup="${i#*=}"
+        shift
+        ;;
     --=* | -*) # unsupported args
         usage
         exit 1
@@ -85,6 +89,11 @@ fi
 
 if [[ -z $constraints ]]; then
     constraints=${CONSTRAINTS[*]}
+fi
+
+# "auto", "skip", "force", "only"
+if [[ -z $setup ]]; then
+    setup=auto
 fi
 
 if [[ -z $parallel ]]; then
@@ -112,7 +121,7 @@ for c in ${constraints}; do
     for b in ${benchmarks}; do
         for f in ${frameworks}; do
             echo "python runbenchmark.py $f $b $c -m $mode -p $parallel -i ."
-            yes | python runbenchmark.py "$f" "$b" "$c" -m "$mode" -p "$parallel" -i . # "$extra_params"
+            yes | python runbenchmark.py "$f" "$b" "$c" -m "$mode" -s "$setup" -p "$parallel" -i . # "$extra_params"
         done
     done
 done
