@@ -18,7 +18,7 @@
     - rmsle # root mean squared log error
     - r2 # R^2 score
   folds: 1
-  max_runtime_seconds: 600
+  max_runtime_seconds: 1200
   cores: 1
   max_mem_size_mb: -1
   ec2_instance_type: m5.large
@@ -27,7 +27,7 @@
 - name: __defaults__
   folds: 1
   cores: 4
-  max_runtime_seconds: 200
+  max_runtime_seconds: 400
 
 - name: teddata
   dataset:
