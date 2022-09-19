@@ -48,3 +48,5 @@ Singularityfile
 !reports/**/*.csv
 !reports/**/*.png
 !docs/img/**/*.png
+.Rhistory
+.RData
