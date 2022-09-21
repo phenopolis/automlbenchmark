@@ -165,8 +165,10 @@ parser.add_argument("-X", "--extra", default=[], action="append", help=argparse.
 # group.add_argument('--no-keep-scores', dest='keep_scores', action='store_false')
 # parser.set_defaults(keep_scores=True)
 
-# removing this command line argument for now: by default, we're using the user default region as defined in ~/aws/config
-#  on top of this, user can now override the aws.region setting in his custom ~/.config/automlbenchmark/config.yaml settings.
+# removing this command line argument for now: by default, we're using
+# the user default region as defined in ~/aws/config
+# on top of this, user can now override the aws.region setting in his
+# custom ~/.config/automlbenchmark/config.yaml settings.
 # parser.add_argument('-r', '--region', metavar='aws_region', default=None,
 #                     help="The region on which to run the benchmark when using AWS.")
 
