@@ -33,6 +33,7 @@ _site/
 *.parquet
 *.shuf
 *.org
+*.arff
 
 # binary files
 *.zip
