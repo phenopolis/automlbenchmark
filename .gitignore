@@ -30,8 +30,9 @@ _site/
 *.lock
 *.log
 *.csv
-*.arff
 *.parquet
+*.shuf
+*.org
 
 # binary files
 *.zip
